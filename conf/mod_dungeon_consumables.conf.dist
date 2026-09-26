@@ -1,0 +1,59 @@
+[worldserver]
+
+########################################
+# mod-dungeon-consumables
+#
+# Real players (not playerbots) get level-appropriate healing potions, plus mana potions for
+# mana users, when they enter a dungeon. Whatever is left disappears when they leave. Coming back
+# to the same run (after a corpse run or a trip out to repair) gives back what they left with.
+#
+# The potions are separate "Dungeon ..." copies of the normal ones, so potions a player already
+# owns are never touched. They share the normal potion cooldown.
+########################################
+
+#
+#    DungeonConsumables.Enable
+#        Description: Hand out dungeon potions. Turning this off still takes away any that
+#                     players are holding the next time they change maps.
+#        Default:     1
+#
+
+DungeonConsumables.Enable = 1
+
+#
+#    DungeonConsumables.HealingPotions
+#    DungeonConsumables.ManaPotions
+#        Description: How many of each a player gets per run. 0 turns that kind off. Mana
+#                     potions only go to classes that use mana. More than 20 takes a second
+#                     bag slot.
+#        Default:     5, 5
+#
+
+DungeonConsumables.HealingPotions = 5
+DungeonConsumables.ManaPotions = 5
+
+#
+#    DungeonConsumables.IncludeRaids
+#        Description: Also hand them out in raids.
+#        Default:     0
+#
+
+DungeonConsumables.IncludeRaids = 0
+
+#
+#    DungeonConsumables.RespectIndividualProgression
+#        Description: With mod-individual-progression enabled, hold players back to potions from
+#                     the eras they've unlocked: Super potions need Outland (state 8), Runic
+#                     potions need Northrend (state 13). Has no effect without that module.
+#        Default:     1
+#
+
+DungeonConsumables.RespectIndividualProgression = 1
+
+#
+#    DungeonConsumables.Announce
+#        Description: Tell players in chat that the potions disappear when they leave.
+#        Default:     1
+#
+
+DungeonConsumables.Announce = 1
