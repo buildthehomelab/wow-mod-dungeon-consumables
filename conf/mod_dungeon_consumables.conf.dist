@@ -3,7 +3,7 @@
 ########################################
 # mod-dungeon-consumables
 #
-# Real players (not playerbots) get Dungeon Rejuvenation Potions when they enter a dungeon. Each
+# Real players (not playerbots) get Delver's Draughts when they enter a dungeon. Each
 # restores 50% of maximum health and mana over 10 seconds, so it works the same at every level.
 # Whatever is left disappears when they leave. Coming back to the same run (after a corpse run
 # or a trip out to repair) gives back what they left with.
@@ -14,7 +14,7 @@
 
 #
 #    DungeonConsumables.Enable
-#        Description: Hand out dungeon potions. Turning this off still takes away any that
+#        Description: Hand out Delver's Draughts. Turning this off still takes away any that
 #                     players are holding the next time they change maps.
 #        Default:     1
 #

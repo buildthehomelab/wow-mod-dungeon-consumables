@@ -3,7 +3,7 @@
 An [AzerothCore](https://www.azerothcore.org/) (WotLK 3.3.5a) module that hands players a few
 potions when they walk into a dungeon, to make runs a little easier.
 
-- **On entry**, real players get 5 **Dungeon Rejuvenation Potions**. Each one restores 50% of
+- **On entry**, real players get 5 **Delver's Draughts**. Each one restores 50% of
   maximum health and mana over 10 seconds. Because the amounts are percentages, the same potion
   works at level 15 and at 80. Classes without mana just get the heal.
 - **On leaving**, whatever is left disappears.
@@ -16,16 +16,17 @@ The number of potions is configurable.
 
 ## Your own potions are safe
 
-The Dungeon Rejuvenation Potion is its own item (entry 9500100), and the module only ever removes
-that entry. Potions you bought or crafted are never touched and don't stack with it. It shares
-the normal potion cooldown.
+Delver's Draught is its own item (entry 9500100), and the module only ever removes that entry.
+Potions you bought or crafted are never touched and don't stack with it. It shares the normal
+potion cooldown.
 
 It's Bind on Pickup and sells for nothing, so it can't be traded, mailed or vendored.
 
 ## How it works
 
-The potion casts **Gift of the Water Spirit** (spell 30874): 5% of maximum health and mana every
-second for 10 seconds. Blizzard only ever gave that spell to an NPC, and no item uses it. So:
+Delver's Draught casts **Gift of the Water Spirit** (spell 30874): 5% of maximum health and mana
+every second for 10 seconds. Blizzard only ever gave that spell to an NPC, and no item uses it.
+So:
 
 - **No server script is needed.** The percentages are Blizzard's own spell data.
 - **The tooltip is correct.** The client shows "Use: Regenerates 50% of your total health and mana

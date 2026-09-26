@@ -1,7 +1,7 @@
 /*
  * mod-dungeon-consumables
  *
- * Real players get a few Dungeon Rejuvenation Potions in their bags when they enter a dungeon,
+ * Real players get a few Delver's Draughts in their bags when they enter a dungeon,
  * and lose whatever is left when they leave. Each one restores 50% of maximum health and mana
  * over 10 seconds, so the same potion is as useful at level 15 as at 80. The percentages come
  * from the potion's spell, Gift of the Water Spirit; see the SQL.
@@ -32,7 +32,7 @@
 namespace
 {
     // Must match the SQL.
-    constexpr uint32 ITEM_DUNGEON_REJUVENATION_POTION = 9500100;
+    constexpr uint32 ITEM_DELVERS_DRAUGHT = 9500100;
 
     struct Config
     {
@@ -85,12 +85,12 @@ namespace
         return map && (map->IsNonRaidDungeon() || (config.includeRaids && map->IsRaid()));
     }
 
-    // Removes every dungeon potion the player has, bank included, and returns how many.
+    // Removes every Delver's Draught the player has, bank included, and returns how many.
     uint32 TakeAll(Player* player)
     {
-        uint32 count = player->GetItemCount(ITEM_DUNGEON_REJUVENATION_POTION, true);
+        uint32 count = player->GetItemCount(ITEM_DELVERS_DRAUGHT, true);
         if (count)
-            player->DestroyItemCount(ITEM_DUNGEON_REJUVENATION_POTION, count, true);
+            player->DestroyItemCount(ITEM_DELVERS_DRAUGHT, count, true);
 
         return count;
     }
@@ -103,17 +103,17 @@ namespace
 
         uint32 noSpaceForCount = 0;
         ItemPosCountVec dest;
-        InventoryResult msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_DUNGEON_REJUVENATION_POTION,
+        InventoryResult msg = player->CanStoreNewItem(NULL_BAG, NULL_SLOT, dest, ITEM_DELVERS_DRAUGHT,
             count, &noSpaceForCount);
         uint32 given = msg == EQUIP_ERR_OK ? count : count - noSpaceForCount;
 
         if (given && !dest.empty())
-            if (Item* item = player->StoreNewItem(dest, ITEM_DUNGEON_REJUVENATION_POTION, true))
+            if (Item* item = player->StoreNewItem(dest, ITEM_DELVERS_DRAUGHT, true))
                 player->SendNewItem(item, given, true, false);
 
         ChatHandler chat(player->GetSession());
         if (given < count)
-            chat.PSendSysMessage("Your bags are full: {} dungeon potion(s) didn't fit.", count - given);
+            chat.PSendSysMessage("Your bags are full: {} Delver's Draught(s) didn't fit.", count - given);
 
         if (fresh && config.announce)
             chat.SendSysMessage("You receive dungeon supplies. They disappear when you leave the dungeon.");
@@ -183,9 +183,9 @@ public:
     // Items are loaded by now.
     void OnStartup() override
     {
-        if (!sObjectMgr->GetItemTemplate(ITEM_DUNGEON_REJUVENATION_POTION))
-            LOG_ERROR("module", "mod-dungeon-consumables: item {} (Dungeon Rejuvenation Potion) is missing from "
-                "item_template. Apply the module's SQL.", ITEM_DUNGEON_REJUVENATION_POTION);
+        if (!sObjectMgr->GetItemTemplate(ITEM_DELVERS_DRAUGHT))
+            LOG_ERROR("module", "mod-dungeon-consumables: item {} (Delver's Draught) is missing from "
+                "item_template. Apply the module's SQL.", ITEM_DELVERS_DRAUGHT);
     }
 };
 

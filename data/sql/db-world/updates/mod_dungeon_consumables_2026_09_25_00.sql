@@ -1,4 +1,4 @@
--- mod-dungeon-consumables: the Dungeon Rejuvenation Potion.
+-- mod-dungeon-consumables: Delver's Draught, the dungeon potion.
 --
 -- A copy of the Minor Rejuvenation Potion (2456) with its own entry, so the module can find and
 -- remove exactly these when a player leaves a dungeon without touching potions the player bought
@@ -13,7 +13,7 @@
 --
 -- It's Bind on Pickup, sells for nothing and has no level requirement.
 --
--- The entry must match ITEM_DUNGEON_REJUVENATION_POTION in src/DungeonConsumables.cpp.
+-- The entry must match ITEM_DELVERS_DRAUGHT in src/DungeonConsumables.cpp.
 --
 -- Idempotent: safe to run again. The range delete also clears the per-level potions (9500101 to
 -- 9500115) from the module's first version.
@@ -22,14 +22,14 @@ SET @ENTRY := 9500100;
 
 DELETE FROM `item_template` WHERE `entry` BETWEEN @ENTRY AND @ENTRY + 15;
 
-DROP TEMPORARY TABLE IF EXISTS `tmp_dungeon_rejuvenation_potion`;
-CREATE TEMPORARY TABLE `tmp_dungeon_rejuvenation_potion` LIKE `item_template`;
+DROP TEMPORARY TABLE IF EXISTS `tmp_delvers_draught`;
+CREATE TEMPORARY TABLE `tmp_delvers_draught` LIKE `item_template`;
 
-INSERT INTO `tmp_dungeon_rejuvenation_potion` SELECT * FROM `item_template` WHERE `entry` = 2456;
+INSERT INTO `tmp_delvers_draught` SELECT * FROM `item_template` WHERE `entry` = 2456;
 
-UPDATE `tmp_dungeon_rejuvenation_potion`
+UPDATE `tmp_delvers_draught`
 SET `entry`                   = @ENTRY,
-    `name`                    = 'Dungeon Rejuvenation Potion',
+    `name`                    = 'Delver''s Draught',
     `description`             = 'Disappears when you leave the dungeon.',
     `RequiredLevel`           = 0,
     `ItemLevel`               = 1,
@@ -44,9 +44,9 @@ SET `entry`                   = @ENTRY,
     `spellcategorycooldown_1` = 60000,
     `VerifiedBuild`           = 0;
 
-INSERT INTO `item_template` SELECT * FROM `tmp_dungeon_rejuvenation_potion`;
+INSERT INTO `item_template` SELECT * FROM `tmp_delvers_draught`;
 
-DROP TEMPORARY TABLE `tmp_dungeon_rejuvenation_potion`;
+DROP TEMPORARY TABLE `tmp_delvers_draught`;
 
 -- An earlier version bound a script to Minor Rejuvenation Potion's spell; it's no longer used.
 DELETE FROM `spell_script_names` WHERE `ScriptName` = 'spell_dungeon_rejuvenation_potion';
