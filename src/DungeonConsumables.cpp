@@ -31,8 +31,9 @@
 
 namespace
 {
-    // Must match the SQL.
-    constexpr uint32 ITEM_DELVERS_DRAUGHT = 9500100;
+    // Must match the SQL. An unused Blizzard placeholder ("NPC Equip 32967") rather than a new
+    // entry, because the client only shows an icon for entries in its own Item.dbc.
+    constexpr uint32 ITEM_DELVERS_DRAUGHT = 32967;
 
     struct Config
     {

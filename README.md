@@ -16,7 +16,7 @@ The number of potions is configurable.
 
 ## Your own potions are safe
 
-Delver's Draught is its own item (entry 9500100), and the module only ever removes that entry.
+Delver's Draught is its own item (entry 32967), and the module only ever removes that entry.
 Potions you bought or crafted are never touched and don't stack with it. It shares the normal
 potion cooldown.
 
@@ -35,6 +35,14 @@ So:
 
 It uses the normal 1-minute potion cooldown, shared with all other potions. The spell's own
 5-minute cooldown doesn't apply, because the item's cooldown fields replace it.
+
+### Why entry 32967
+
+The 3.3.5 client takes a bag item's icon from its own Item.dbc, by entry, so a brand-new item
+entry shows a question mark unless players install a client patch. Entry 32967 is "NPC Equip
+32967", a placeholder Blizzard never gave players: nothing drops, sells, creates or rewards it,
+and no NPC equips it. The client lists it as a consumable with the Summon Water Elemental icon,
+which suits a potion that casts Gift of the Water Spirit. The module's SQL rewrites that row.
 
 Things to know, all from the spell's own data, which the client enforces too:
 
