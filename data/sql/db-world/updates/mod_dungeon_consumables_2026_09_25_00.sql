@@ -1,64 +1,52 @@
--- mod-dungeon-consumables: the dungeon-only potions.
+-- mod-dungeon-consumables: the Dungeon Rejuvenation Potion.
 --
--- Each one is a copy of a normal healing or mana potion (same spell, same icon, same shared
--- potion cooldown) with its own entry, so the module can find and remove exactly these when a
--- player leaves the dungeon without touching potions the player bought or crafted. The copies
--- are Bind on Pickup and can't be sold, so they can't be traded or vendored for gold either.
+-- A copy of the Minor Rejuvenation Potion (2456) with its own entry, so the module can find and
+-- remove exactly these when a player leaves a dungeon without touching potions the player bought
+-- or crafted. It keeps the original's icon and its potion cooldown (category 4, 1 minute, shared
+-- with every other potion).
 --
--- The entries must match ENTRY_BASE and the Tiers table in src/DungeonConsumables.cpp.
+-- Its spell is swapped for Gift of the Water Spirit (30874): 5% of maximum health and mana every
+-- second for 10 seconds. Blizzard only ever gave that spell to an NPC, and no item uses it, so
+-- the percentages come straight from the game data with no script, the client's tooltip already
+-- describes it correctly, and nothing players can get elsewhere is affected. The spell's own
+-- 5-minute cooldown doesn't apply: the item's cooldown fields replace it.
 --
--- Copied from the live rows rather than written out, so they pick up whatever the server
--- already has for the originals (mod-individual-progression edits some item_template rows).
+-- It's Bind on Pickup, sells for nothing and has no level requirement.
 --
--- Idempotent: safe to run again.
+-- The entry must match ITEM_DUNGEON_REJUVENATION_POTION in src/DungeonConsumables.cpp.
+--
+-- Idempotent: safe to run again. The range delete also clears the per-level potions (9500101 to
+-- 9500115) from the module's first version.
 
-SET @BASE := 9500100;
+SET @ENTRY := 9500100;
 
-DELETE FROM `item_template` WHERE `entry` BETWEEN @BASE AND @BASE + 15;
+DELETE FROM `item_template` WHERE `entry` BETWEEN @ENTRY AND @ENTRY + 15;
 
-DROP TEMPORARY TABLE IF EXISTS `tmp_dungeon_consumable_map`;
-CREATE TEMPORARY TABLE `tmp_dungeon_consumable_map` (
-    `source` INT UNSIGNED NOT NULL PRIMARY KEY,
-    `entry`  INT UNSIGNED NOT NULL
-);
+DROP TEMPORARY TABLE IF EXISTS `tmp_dungeon_rejuvenation_potion`;
+CREATE TEMPORARY TABLE `tmp_dungeon_rejuvenation_potion` LIKE `item_template`;
 
-INSERT INTO `tmp_dungeon_consumable_map` (`source`, `entry`) VALUES
-(118,   @BASE + 0),  -- Minor Healing Potion      (level 1)
-(858,   @BASE + 1),  -- Lesser Healing Potion     (level 3)
-(929,   @BASE + 2),  -- Healing Potion            (level 12)
-(1710,  @BASE + 3),  -- Greater Healing Potion    (level 21)
-(3928,  @BASE + 4),  -- Superior Healing Potion   (level 35)
-(13446, @BASE + 5),  -- Major Healing Potion      (level 45)
-(22829, @BASE + 6),  -- Super Healing Potion      (level 55)
-(33447, @BASE + 7),  -- Runic Healing Potion      (level 70)
-(2455,  @BASE + 8),  -- Minor Mana Potion         (level 5)
-(3385,  @BASE + 9),  -- Lesser Mana Potion        (level 14)
-(3827,  @BASE + 10), -- Mana Potion               (level 22)
-(6149,  @BASE + 11), -- Greater Mana Potion       (level 31)
-(13443, @BASE + 12), -- Superior Mana Potion      (level 41)
-(13444, @BASE + 13), -- Major Mana Potion         (level 49)
-(22832, @BASE + 14), -- Super Mana Potion         (level 55)
-(33448, @BASE + 15); -- Runic Mana Potion         (level 70)
+INSERT INTO `tmp_dungeon_rejuvenation_potion` SELECT * FROM `item_template` WHERE `entry` = 2456;
 
-DROP TEMPORARY TABLE IF EXISTS `tmp_dungeon_consumable_items`;
-CREATE TEMPORARY TABLE `tmp_dungeon_consumable_items` LIKE `item_template`;
+UPDATE `tmp_dungeon_rejuvenation_potion`
+SET `entry`                   = @ENTRY,
+    `name`                    = 'Dungeon Rejuvenation Potion',
+    `description`             = 'Disappears when you leave the dungeon.',
+    `RequiredLevel`           = 0,
+    `ItemLevel`               = 1,
+    `bonding`                 = 1, -- Bind on Pickup
+    `BuyPrice`                = 0,
+    `SellPrice`               = 0,
+    `spellid_1`               = 30874, -- Gift of the Water Spirit
+    `spelltrigger_1`          = 0,     -- on use
+    `spellcharges_1`          = -1,    -- used up
+    `spellcooldown_1`         = 0,
+    `spellcategory_1`         = 4,     -- potions
+    `spellcategorycooldown_1` = 60000,
+    `VerifiedBuild`           = 0;
 
-INSERT INTO `tmp_dungeon_consumable_items`
-SELECT `it`.* FROM `item_template` `it`
-JOIN `tmp_dungeon_consumable_map` `m` ON `m`.`source` = `it`.`entry`;
+INSERT INTO `item_template` SELECT * FROM `tmp_dungeon_rejuvenation_potion`;
 
-UPDATE `tmp_dungeon_consumable_items` `t`
-SET `t`.`entry` = (SELECT `m`.`entry` FROM `tmp_dungeon_consumable_map` `m` WHERE `m`.`source` = `t`.`entry`);
+DROP TEMPORARY TABLE `tmp_dungeon_rejuvenation_potion`;
 
-UPDATE `tmp_dungeon_consumable_items`
-SET `name`          = CONCAT('Dungeon ', `name`),
-    `description`   = 'Dungeon supplies. Disappears when you leave the dungeon.',
-    `bonding`       = 1, -- Bind on Pickup
-    `BuyPrice`      = 0,
-    `SellPrice`     = 0,
-    `VerifiedBuild` = 0;
-
-INSERT INTO `item_template` SELECT * FROM `tmp_dungeon_consumable_items`;
-
-DROP TEMPORARY TABLE `tmp_dungeon_consumable_items`;
-DROP TEMPORARY TABLE `tmp_dungeon_consumable_map`;
+-- An earlier version bound a script to Minor Rejuvenation Potion's spell; it's no longer used.
+DELETE FROM `spell_script_names` WHERE `ScriptName` = 'spell_dungeon_rejuvenation_potion';
