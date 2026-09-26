@@ -184,9 +184,16 @@ public:
     // Items are loaded by now.
     void OnStartup() override
     {
-        if (!sObjectMgr->GetItemTemplate(ITEM_DELVERS_DRAUGHT))
+        ItemTemplate const* proto = sObjectMgr->GetItemTemplate(ITEM_DELVERS_DRAUGHT);
+        if (!proto)
             LOG_ERROR("module", "mod-dungeon-consumables: item {} (Delver's Draught) is missing from "
                 "item_template. Apply the module's SQL.", ITEM_DELVERS_DRAUGHT);
+        // The server only tells the client a potion's in-combat cooldown can start when the item
+        // is a Potion, so anything else leaves every potion stuck on the client until they zone.
+        else if (!proto->IsPotion())
+            LOG_ERROR("module", "mod-dungeon-consumables: item {} (Delver's Draught) isn't a Potion "
+                "(class 0, subclass 1), so potion cooldowns will get stuck. Apply the module's SQL.",
+                ITEM_DELVERS_DRAUGHT);
     }
 };
 

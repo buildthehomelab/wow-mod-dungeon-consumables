@@ -44,6 +44,11 @@ entry shows a question mark unless players install a client patch. Entry 32967 i
 and no NPC equips it. The client lists it as a consumable with the Summon Water Elemental icon,
 which suits a potion that casts Gift of the Water Spirit. The module's SQL rewrites that row.
 
+The row keeps subclass Potion, even though the client's Item.dbc says Other. A potion drunk in
+combat starts its cooldown only when combat ends, and the server sends that signal to the client
+only for items of subclass Potion. As Other, every potion got stuck waiting for a signal that never
+came, until the player zoned.
+
 Things to know, all from the spell's own data, which the client enforces too:
 
 - Druids have to leave bear, cat or other forms to drink it.
