@@ -57,7 +57,15 @@ Things to know, all from the spell's own data, which the client enforces too:
 - The amount is fixed at 50% over 10 seconds. Changing it would need a client patch to keep the
   tooltip right.
 
-## Install
+## Requirements
+
+- [AzerothCore](https://www.azerothcore.org/) wotlk (master) and a WoW 3.3.5a (12340) client.
+- No client patch. The potion reuses item entry 32967, which the 3.3.5 client already lists as a
+  consumable with its own icon.
+- [mod-playerbots](https://github.com/mod-playerbots/mod-playerbots) is optional. Bots are detected
+  with `WorldSession::IsHeadless()` (or `IsBot()` on older playerbots cores) and skipped.
+
+## Installation
 
 ```bash
 cd azerothcore-wotlk/modules
@@ -82,3 +90,21 @@ notice.
   dungeon keeps the potions they had.
 - If your bags are full on entry, you're told how many potions didn't fit. They aren't given
   later.
+
+## Troubleshooting
+
+- **The worldserver logs an error about the potion at startup:** the module's SQL in
+  `data/sql/db-world/updates` hasn't been applied, so item 32967 is still the placeholder. Start
+  the worldserver again and let the updater run.
+- **Some potions never arrived:** your bags were full on entry. You're told how many didn't fit,
+  and they aren't given later.
+- **A druid can't drink it:** the spell can't be cast in Cat, Bear or other forms. Leave the form first.
+- **The module doesn't build or load:** the folder must be named `mod-dungeon-consumables`.
+
+## Credits
+
+Author: [buildthehomelab](https://github.com/buildthehomelab)
+
+## License
+
+MIT, see [LICENSE](LICENSE).
